@@ -2,6 +2,7 @@
 
 ## General
 
+* `local-css-uploader`: Watch CSS files for changes and upload to Reddit (supports preprocessors).
 * `wiki-mover`: Bulk moving of wiki pages, including between subreddits.
 * `snoo-rotation`: Upload a randomly-selected snoo.
 
