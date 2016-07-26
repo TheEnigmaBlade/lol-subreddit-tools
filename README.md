@@ -3,6 +3,7 @@
 ## General
 
 * `wiki-mover`: Bulk moving of wiki pages, including between subreddits.
+* `snoo-rotation`: Upload a randomly-selected snoo.
 
 ## Slack integrations
 
