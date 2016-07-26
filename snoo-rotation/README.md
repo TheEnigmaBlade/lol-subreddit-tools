@@ -16,7 +16,7 @@ Should be set up with a scheduler (ex. cron) to run regularly.
 
 ## Configuration
 
-The following settings are available at the top of `wiki_mover.py`.
+The following settings are available at the top of `update_snoo.py`.
 
 |Name|Type|Description|Example|
 :--|:-:|:--|:--
