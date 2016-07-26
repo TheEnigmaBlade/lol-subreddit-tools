@@ -96,3 +96,4 @@ oauth_store*.txt
 config_secret.py
 caches/
 snoos/
+css/
