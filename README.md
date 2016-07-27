@@ -9,6 +9,7 @@
 ## Slack integrations
 
 * `sr-forwarder`: Forwards new posts in a subreddit to Slack channels.
+* `queue-monitor`: Monitor a subreddit's queue (like new) for high activity and send warnings to Slack.
 
 ## /r/LeagueofLegends-specific, but modifiable
 
