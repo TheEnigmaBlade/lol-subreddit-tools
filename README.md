@@ -9,3 +9,7 @@
 ## Slack integrations
 
 * `sr-forwarder`: Forwards new posts in a subreddit to Slack channels.
+
+## /r/LeagueofLegends-specific, but modifiable
+
+* `flair-generator`: Generates and uploads CSS, sprite sheets, and markdown tables for flair and comment icons.
