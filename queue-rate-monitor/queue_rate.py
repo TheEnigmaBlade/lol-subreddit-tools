@@ -9,7 +9,7 @@ queue = "new"
 rate_threshold = 1 / 2	# post / sec
 
 slack_webhook = ""
-slack_channels = ["#general"]
+slack_channels = ["general"]
 slack_message = "{queue} has become super active: {posts} posts made in {time} seconds"
 
 user_agent = "script:Queue monitor for Slack:v2.0 (by /u/TheEnigmaBlade), run for /r/{}".format(subreddit)
@@ -70,10 +70,14 @@ def main():
 	last_time = get_time()
 	
 	print("Getting {}".format(queue))
-	new = None
 	if queue == "new":
 		new = sub.get_new(limit=10)
-		new = [t for t in map(lambda p: p.created_utc, new) if t > last_time]
+	elif queue == "rising":
+		new = sub.get_rising(limit=10)
+	else:
+		print("\"{}\" is not a valid queue. Use \"new\" or \"rising\".".format(queue), file=sys.stderr)
+		return
+	new = [t for t in map(lambda p: p.created_utc, new) if t > last_time]
 	
 	num_new = len(new)
 	print("Num new posts: {}".format(num_new))
