@@ -8,8 +8,11 @@
 
 ## Slack integrations
 
+[Simple screenshot guide to creating a web hook integration.](https://github.com/TheEnigmaBlade/lol-subreddit-tools/wiki/Creating-a-Slack-web-hook-integration)
+
 * `sr-forwarder`: Forwards new posts in a subreddit to Slack channels.
-* `queue-monitor`: Monitor a subreddit's queue (like new) for high activity and send warnings to Slack.
+* `queue-size-monitor`: Monitor for large mod queues (modqueue, unmoderated) and send warnings to Slack.
+* `queue-rate-monitor`: Monitor a subreddit's queue (like new) for high activity and send warnings to Slack.
 
 ## /r/LeagueofLegends-specific, but modifiable
 
