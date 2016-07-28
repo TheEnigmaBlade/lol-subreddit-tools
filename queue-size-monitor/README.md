@@ -24,7 +24,7 @@ The following settings are available at the top of `queue_size.py`.
 :--|:-:|:--|:--
 subreddit|string|Subreddit being monitored (without `/r/`)|`"mysubreddit"`
 queues|list(string)|List of queues being monitored. Available queues: `modqueue`, `unmoderated`, `spam`|`["modqueue"]`
-rate_threshold|float/int|Threshold of posts per second. Expressions make it easy to read.|`1/2`
+thresholds|list(tuple)|List of threshold tuples comprised of an int and string.|`[(20, "This message is sent for queues over 20!")]`
 |||
 slack_webhook|string|Slack web hook integration URL|`"https://hooks.slack.com/services/we3srhas/34rygway/f02q9uaw98usdijfhaosidjad"`
 slack_channels|list(string)|List of Slack channels to send messages. If `None` sends to the default integration channel.|`["general", "warnings"]`
