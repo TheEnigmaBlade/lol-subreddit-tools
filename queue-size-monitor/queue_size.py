@@ -17,7 +17,9 @@ oauth_public = ""
 oauth_secret = ""
 username = ""
 password = ""
-user_agent = "script:Queue size monitor for Slack:v1.0 (by /u/TheEnigmaBlade), run for /r/{}".format(subreddit)
+user_agent = "script:Queue size monitor for Slack:v1.1 (by /u/TheEnigmaBlade), run for /r/{}".format(subreddit)
+
+cache_file = "caches/count_{subreddit}_{queue}.txt"
 
 ##########################################
 # DO NOT TOUCH ANYTHING AFTER THIS POINT #
@@ -41,7 +43,27 @@ def send_message(msg):
 		print(msg)
 		resp = requests.post(slack_webhook, json={"text": msg, "channel": channel})
 		print(resp.status_code, resp.reason)
-	
+
+# Caching
+
+def get_last_count(queue):
+	try:
+		with open(cache_file.format(subreddit=subreddit, queue=queue), "r") as f:
+			return int(f.readline().strip())
+	except FileNotFoundError as e:
+		print("Failed to get last count", file=sys.stderr)
+		print(e)
+		return 0
+
+def save_count(queue, count):
+	try:
+		os.makedirs(os.path.dirname(cache_file), exist_ok=True)
+		with open(cache_file.format(subreddit=subreddit, queue=queue), "w") as f:
+			f.write("{}".format(count))
+	except FileNotFoundError as e:
+		print("Failed to save time", file=sys.stderr)
+		print(e)
+
 # Helpers
 
 class _SafeDict(dict):
@@ -62,6 +84,12 @@ def safe_format(s, **kwargs):
 
 import sys, praw_script_oauth
 from operator import itemgetter
+
+def threshold_index(count):
+	for i, t in enumerate(thresholds):
+		if count >= t[0]:
+			return i, t[1]
+	return -1, None
 
 def format_message(msg, queue, num_things):
 	url = "https://reddit.com/r/{}/about/{}".format(subreddit, queue)
@@ -95,13 +123,18 @@ def main():
 		num_things = len(things)
 		print("Num things: {}".format(num_things))
 		
+		# Check cache
+		prev_count = get_last_count(queue)
+		prev_i, _ = threshold_index(prev_count)
+		
 		# Check thresholds
-		for threshold, msg in thresholds:
-			if num_things >= threshold:
-				print("It's over the threshold!!!")
-				msg = format_message(msg, queue, num_things)
-				send_message(msg)
-				break
+		i, msg = threshold_index(num_things)
+		if i > prev_i:
+			print("It's over the threshold!!!")
+			msg = format_message(msg, queue, num_things)
+			send_message(msg)
+		
+		save_count(queue, num_things)
 
 if __name__ == "__main__":
 	main()
