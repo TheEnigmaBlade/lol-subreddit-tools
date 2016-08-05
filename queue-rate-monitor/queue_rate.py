@@ -57,6 +57,22 @@ def send_message(msg):
 		resp = requests.post(slack_webhook, json={"text": msg, "channel": channel})
 		print(resp.status_code, resp.reason)
 
+# Helpers
+
+class _SafeDict(dict):
+	def __missing__(self, key):
+		return "{" + key + "}"
+
+def safe_format(s, **kwargs):
+	"""
+	A safer version of the default str.format(...) function.
+	Ignores unused keyword arguments and unused '{...}' placeholders instead of throwing a KeyError.
+	:param s: The string being formatted
+	:param kwargs: The format replacements
+	:return: A formatted string
+	"""
+	return s.format_map(_SafeDict(**kwargs))
+
 # Main
 
 import praw
@@ -91,7 +107,7 @@ def main():
 	
 	if rate > rate_threshold:
 		print("It's over the threshold!!!")
-		msg = slack_message.format(queue=queue, posts=num_new, time=int(time_diff))
+		msg = safe_format(slack_message, queue=queue, posts=num_new, time=int(time_diff), rate=rate)
 		send_message(msg)
 
 if __name__ == "__main__":

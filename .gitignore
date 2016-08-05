@@ -69,6 +69,7 @@ ENV/
 
 # Project-specific
 
+*.cache
 oauth_store*.txt
 config_secret.py
 caches/

@@ -28,4 +28,4 @@ thresholds|list(tuple)|List of threshold tuples comprised of an int and string.|
 |||
 slack_webhook|string|Slack web hook integration URL|`"https://hooks.slack.com/services/we3srhas/34rygway/f02q9uaw98usdijfhaosidjad"`
 slack_channels|list(string)|List of Slack channels to send messages. If `None` sends to the default integration channel.|`["general", "warnings"]`
-slack_message|string|Message to send. Formatted with `{queue}`, `{posts}`, and `{time}`.|`"{queue} has become super active: {posts} posts made in {time} seconds"`
+slack_message|string|Message to send. Formatted with `{queue}`, `{count}`, and `{url}`.|`"{queue} has become super active: {posts} posts made in {time} seconds"`
