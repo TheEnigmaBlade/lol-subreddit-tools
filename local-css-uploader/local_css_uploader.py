@@ -105,6 +105,9 @@ def update_reddit(css):
 			print(errors, file=sys.stderr)
 		else:
 			print("Done!")
+	except (praw.errors.BadCSS, praw.errors.BadCSSName) as e:
+		print("Bad CSS")
+		print(e)
 	except praw.errors.OAuthInvalidToken:
 		print("Failed, retrying...")
 		time.sleep(2)
@@ -119,17 +122,17 @@ class FileSaveWatcher(FileSystemEventHandler):
 		self.last_time = 0
 	
 	def on_any_event(self, event):
+		# Check if ignored
+		if event.src_path in self.ignores:
+			return
+		if not event.src_path.endswith(include_ext):
+			return
+		
 		# Check if off cooldown
 		curr_time = time.time()
 		if curr_time - self.last_time < update_cooldown:
 			return
 		self.last_time = curr_time
-		
-		#Check if ignored
-		if event.src_path in self.ignores:
-			return
-		if not event.src_path.endswith(include_ext):
-			return
 		
 		update_css()
 
