@@ -8,7 +8,7 @@ oauth_public = ""
 oauth_secret = ""
 username = ""
 password = ""
-user_agent = "script:Snoo updater:v1.1 (by /u/TheEnigmaBlade), run by /u/{}".format(username)
+user_agent = "script:Snoo updater:v1.2 (by /u/TheEnigmaBlade), run by /u/{}".format(username)
 
 subreddit = ""
 
@@ -18,7 +18,7 @@ snoos_dir = "snoos/"
 # DO NOT TOUCH ANYTHING AFTER THIS POINT #
 ##########################################
 
-import os, praw_script_oauth, random
+import os, praw, random
 
 _oauth_scopes = {"modconfig"}
 
@@ -35,19 +35,16 @@ def choose_random_snoo():
 
 def upload_snoo(r, path):
 	try:
-		r.upload_image(subreddit, path, header=True)
+		r.subreddit(subreddit).stylesheet.upload_header(path)
 	except:
 		print("Failed to upload sprite image")
 
 def main():
 	# Connect to reddit
-	r = praw_script_oauth.connect(oauth_public, oauth_secret, username, password,
-								  oauth_scopes=_oauth_scopes, useragent=user_agent,
-								  script_key="snoo_updater_{}".format(subreddit))
-	if r is None:
-		print("Failed to create reddit instance")
-		return
-	
+	r = praw.Reddit(client_id=oauth_public, client_secret=oauth_secret,
+					username=username, password=password,
+					user_agent=user_agent,
+					check_for_updates=False)
 	# Update snoo
 	snoo = choose_random_snoo()
 	print("Uploading snoo: {}".format(snoo))
