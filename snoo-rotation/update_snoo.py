@@ -20,8 +20,6 @@ snoos_dir = "snoos/"
 
 import os, praw, random
 
-_oauth_scopes = {"modconfig"}
-
 if "SECRET_CONFIG" in os.environ:
 	c = __import__(os.environ["SECRET_CONFIG"])
 	globals().update({k: c.__dict__[k] for k in c.__dict__ if not k.startswith("_")})
