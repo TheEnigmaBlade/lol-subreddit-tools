@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# TODO: image management (find %% blocks and upload images if added or modified)
+
 ######################
 # User configuration #
 ######################
@@ -8,7 +10,7 @@ oauth_public = ""
 oauth_secret = ""
 username = ""
 password = ""
-user_agent = "script:Dev CSS uploader:v1.1 (by /u/TheEnigmaBlade), run by /u/{}".format(username)
+user_agent = "script:Dev CSS uploader:v1.2 (by /u/TheEnigmaBlade), run by /u/{}".format(username)
 
 watch_dir		= ""
 main_file		= "theme.less"
@@ -29,7 +31,7 @@ update_cooldown = 10 #sec
 ##########################################
 
 import os, time, subprocess
-import praw_script_oauth, praw.errors
+import praw
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -45,10 +47,9 @@ r = None
 def init_reddit():
 	global r
 	if do_upload:
-		if r:
-			r.clear_authentication()
-		r = praw_script_oauth.connect(oauth_public, oauth_secret, username, password, oauth_scopes=_oauth_scopes,
-									  useragent=user_agent, script_key="dev_css_{}".format(username))
+		r = praw.Reddit(client_id=oauth_public, client_secret=oauth_secret,
+						username=username, password=password,
+						user_agent=user_agent)
 
 def update_css():
 	# Get CSS to upload (optionally running a preprocessor)
@@ -96,23 +97,23 @@ def update_reddit(css):
 		print("Can't upload; stylesheet > {} KiB".format(_max_stylesheet_size), file=sys.stderr)
 		return
 	
-	try:
-		response = r.set_stylesheet(subreddit, css)
-		if "errors" in response and len(response["errors"]) > 0:
-			errors = response["errors"]
-			print("Failed!")
-			print("Error when updating stylesheet", file=sys.stderr)
-			print(errors, file=sys.stderr)
-		else:
-			print("Done!")
-	except (praw.errors.BadCSS, praw.errors.BadCSSName) as e:
-		print("Bad CSS")
-		print(e)
-	except praw.errors.OAuthInvalidToken:
-		print("Failed, retrying...")
-		time.sleep(2)
-		init_reddit()
-		update_reddit(css)
+	#try:
+	r.subreddit(subreddit).stylesheet.update(css)
+	#if "errors" in response and len(response["errors"]) > 0:
+	#	errors = response["errors"]
+	#	print("Failed!")
+	#	print("Error when updating stylesheet", file=sys.stderr)
+	#	print(errors, file=sys.stderr)
+	#else:
+	print("Done!")
+	#except (praw.exceptions.BadCSS, praw.exceptions.BadCSSName) as e:
+	#	print("Bad CSS")
+	#	print(e)
+	#except praw.exceptions.OAuthException:
+	#	print("Failed, retrying...")
+	#	time.sleep(2)
+	#	init_reddit()
+	#	update_reddit(css)
 
 # File change watcher
 
@@ -144,6 +145,7 @@ def run_file_watcher():
 	observer = Observer()
 	observer.schedule(FileSaveWatcher(), watch_dir, recursive=True)
 	observer.start()
+	print("Waiting for file changes")
 	try:
 		while True:
 			time.sleep(1)
