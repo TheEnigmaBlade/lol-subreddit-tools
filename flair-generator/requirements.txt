@@ -1,3 +1,2 @@
-praw<4
-praw-script-oauth>=0.1.1
-Pillow>=3.3.0
+praw>=4
+Pillow>=3.4.0

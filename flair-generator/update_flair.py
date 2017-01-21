@@ -225,7 +225,7 @@ def combine_sprites(sprite_files, out_file, scale):
 
 # Main
 
-import praw_script_oauth
+import praw
 
 _oauth_scopes = {"identity", "modconfig"}
 
@@ -332,17 +332,22 @@ def main():
 	write_css_file(stylesheet_new_file, new_css)
 	
 	# Connect to reddit
-	r = praw_script_oauth.connect(oauth_public, oauth_secret, username, password, oauth_scopes=_oauth_scopes,
-								  useragent=user_agent, script_key="flair_{}".format(subreddit))
+	r = praw.Reddit(client_id=oauth_public, client_secret=oauth_secret,
+					username=username, password=password,
+					user_agent=user_agent,
+					check_for_updates=False)
+	if r is None:
+		print("No reddit connection, exiting")
+		return
 	
 	# Get stylesheet
 	print("Updating stylesheet")
 	print("  Retrieving...")
-	stylesheet = r.get_stylesheet(subreddit)
-	if stylesheet is None or "stylesheet" not in stylesheet:
+	r_stylesheet = r.subreddit(subreddit).stylesheet
+	stylesheet = r_stylesheet().stylesheet
+	if stylesheet is None:
 		print("Failed to get stylesheet")
 		return
-	stylesheet = stylesheet["stylesheet"]
 	
 	# Inject new CSS into stylesheet
 	print("  Injecting new CSS")
@@ -370,20 +375,23 @@ def main():
 				print("      Failed to upload sprite image")
 				continue
 			try:
-				r.upload_image(subreddit, sprite_path, name=stylesheet_sprite_name)
-			except:
+				r_stylesheet.upload(stylesheet_sprite_name, sprite_path)
+			except praw.exceptions.PRAWException:
 				print("      Failed to upload sprite image")
+				import traceback
+				traceback.print_exc()
 		
 		print("    Updating stylesheet")
 		if len(stylesheet) > stylesheet_max_size*1024:
 			print("      Greater than {} KiB ({:#.2} KiB)".format(stylesheet_max_size, len(stylesheet) / 1024))
 			print("      Failed to update stylesheet")
 		else:
-			response = r.set_stylesheet(subreddit, stylesheet)
-			print(response)
-			if "errors" in response and len(response["errors"]) > 0:
-				print("Failed to update stylesheet")
-				print(response["errors"])
+			try:
+				r_stylesheet.update(stylesheet)
+			except praw.exceptions.PRAWException:
+				print("      Failed to update stylesheet")
+				import traceback
+				traceback.print_exc()
 	
 	print("Done!")
 
