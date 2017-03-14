@@ -35,10 +35,8 @@ include_ext|string|File extension being monitored for changes. Most useful with 
 exclude_files|list(string)|List of files to ignore, or `None`.|`["snippets.css"]`
 output_file|string|Output file of CSS being uploaded. Path is relative to working directory, *not* `watch_dir`.|`"css/stylesheet.css"`
 extend_file|string|File containing extra CSS to append before uploading. Path is relative to working directory, *not* `watch_dir`.|`"css/flair.css"`
-|||
 use_preprocessor|bool|If `True`, execute `preprocessor_cmd` and read from `output_file`. Otherwise read from `main_file`.|
 preprocessor_cmd|string|Proprocessor command. Use `{in_file}` for the input path and `{out_file}` for the output path.|`"lessc \"{in_file}\" \"{out_file}\""`
-|||
 do_upload|bool|If `True`, upload stylesheet to Reddit.|
 subreddit|string|Subreddit to which the stylesheet is uploaded (without `/r/`).|`"mysubreddit"`
 update_cooldown|int|Time limit between uploads, in seconds.|`10`
